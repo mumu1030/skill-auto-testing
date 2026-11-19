@@ -1,0 +1,600 @@
+{
+  "dependencies": [],
+  "cases": [
+    {
+      "id": "1",
+      "name": "健康检查-服务启动成功",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_get",
+          "request": {"method": "GET", "path": "/"},
+          "assert": {"status": 200, "checks": ["$.status==ok", "$.message==服务运行中"]}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.status==ok", "$.message==服务运行中"]}
+    },
+    {
+      "id": "2",
+      "name": "生成用例-默认参数成功",
+      "enabled": false,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_001"}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_001", "$.platform==Android", "$.case_count==2", "$.cases", "$.created_at"]},
+          "extract": {"id": "$.id"}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_001", "$.platform==Android", "$.case_count==2", "$.cases", "$.created_at"]}
+    },
+    {
+      "id": "3",
+      "name": "生成用例-指定平台与类型成功",
+      "enabled": false,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {
+              "feature": "llm_testcase_20261118_002",
+              "platform": "iOS",
+              "test_types": ["normal", "boundary"],
+              "case_count": 1
+            }
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_002", "$.platform==iOS", "$.case_count==1", "$.cases.normal", "$.cases.boundary"]},
+          "extract": {"id": "$.id"}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_002", "$.platform==iOS", "$.case_count==1", "$.cases.normal", "$.cases.boundary"]}
+    },
+    {
+      "id": "4",
+      "name": "生成用例-test_types为空数组",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_003", "test_types": []}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_003", "$.case_count==2"]},
+          "extract": {"id": "$.id"}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_003", "$.case_count==2"]}
+    },
+    {
+      "id": "5",
+      "name": "生成用例-缺少必填feature",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"platform": "Android", "case_count": 2}
+          },
+          "assert": {"status": 422, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 422, "checks": ["$.detail"]}
+    },
+    {
+      "id": "6",
+      "name": "生成用例-feature为空串",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "", "case_count": 2}
+          },
+          "assert": {"status": 422, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 422, "checks": ["$.detail"]}
+    },
+    {
+      "id": "7",
+      "name": "生成用例-非法平台取值按实现回显",
+      "enabled": false,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_007", "platform": "HarmonyOS"}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_007", "$.platform==HarmonyOS"]},
+          "extract": {"id": "$.id"}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_007", "$.platform==HarmonyOS"]}
+    },
+    {
+      "id": "8",
+      "name": "生成用例-非法测试类型按实现回显",
+      "enabled": false,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_008", "test_types": ["smoke"]}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_008", "$.test_types"]},
+          "extract": {"id": "$.id"}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_008", "$.test_types"]}
+    },
+    {
+      "id": "9",
+      "name": "生成用例-case_count为0",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_009", "case_count": 0}
+          },
+          "assert": {"status": 422, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 422, "checks": ["$.detail"]}
+    },
+    {
+      "id": "10",
+      "name": "生成用例-case_count为负数",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_010", "case_count": -1}
+          },
+          "assert": {"status": 422, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 422, "checks": ["$.detail"]}
+    },
+    {
+      "id": "11",
+      "name": "生成用例-case_count超过上限",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_011", "case_count": 4}
+          },
+          "assert": {"status": 422, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 422, "checks": ["$.detail"]}
+    },
+    {
+      "id": "12",
+      "name": "生成用例-case_count非整数",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_012", "case_count": 1.5}
+          },
+          "assert": {"status": 422, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 422, "checks": ["$.detail"]}
+    },
+    {
+      "id": "13",
+      "name": "查询历史-生成后列表数量N→N+1",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_get",
+          "request": {"method": "GET", "path": "/api/v1/history"},
+          "assert": {"status": 200, "checks": []}
+        },
+        {
+          "name": "step_02_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_013", "test_types": []}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_013"]},
+          "extract": {"id": "$.id"}
+        },
+        {
+          "name": "step_03_get",
+          "request": {"method": "GET", "path": "/api/v1/history"},
+          "assert": {"status": 200, "checks": []}
+        },
+        {
+          "name": "step_04_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_02_post.id"}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_013"]}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_013"]}
+    },
+    {
+      "id": "14",
+      "name": "查询历史-存在记录本case造数",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_014", "test_types": []}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_014"]},
+          "extract": {"id": "$.id"}
+        },
+        {
+          "name": "step_02_get",
+          "request": {"method": "GET", "path": "/api/v1/history"},
+          "assert": {"status": 200, "checks": []}
+        },
+        {
+          "name": "step_03_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_01_post.id"}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_014", "$.platform==Android", "$.case_count==2"]}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_014", "$.platform==Android", "$.case_count==2"]}
+    },
+    {
+      "id": "15",
+      "name": "查询单条记录-存在本case造数",
+      "enabled": false,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {
+              "feature": "llm_testcase_20261118_015",
+              "platform": "Android",
+              "test_types": ["normal", "boundary"],
+              "case_count": 1
+            }
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_015", "$.case_count==1"]},
+          "extract": {"id": "$.id"}
+        },
+        {
+          "name": "step_02_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_01_post.id"}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_015", "$.platform==Android", "$.case_count==1"]}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_015", "$.platform==Android", "$.case_count==1"]}
+    },
+    {
+      "id": "16",
+      "name": "查询单条记录-不存在",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": 999999999}
+          },
+          "assert": {"status": 404, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 404, "checks": ["$.detail"]}
+    },
+    {
+      "id": "17",
+      "name": "查询单条记录-非法ID",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "abc"}
+          },
+          "assert": {"status": 422, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 422, "checks": ["$.detail"]}
+    },
+    {
+      "id": "18",
+      "name": "导出Markdown-存在记录r.json为Markdown字符串",
+      "enabled": false,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {
+              "feature": "llm_testcase_20261118_018",
+              "platform": "Web",
+              "test_types": ["normal", "exception", "boundary", "security"],
+              "case_count": 1
+            }
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_018", "$.cases.normal", "$.cases.exception", "$.cases.boundary", "$.cases.security"]},
+          "extract": {"id": "$.id"}
+        },
+        {
+          "name": "step_02_get_export_json_string",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}/export",
+            "path_params": {"record_id": "STEP:step_01_post.id"}
+          },
+          "assert": {"status": 200, "checks": []}
+        },
+        {
+          "name": "step_03_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_01_post.id"}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_018", "$.cases.normal", "$.cases.exception", "$.cases.boundary", "$.cases.security"]}
+        }
+      ],
+      "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_018", "$.cases.normal", "$.cases.exception", "$.cases.boundary", "$.cases.security"]}
+    },
+    {
+      "id": "19",
+      "name": "导出Markdown-记录不存在",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}/export",
+            "path_params": {"record_id": 999999999}
+          },
+          "assert": {"status": 404, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 404, "checks": ["$.detail"]}
+    },
+    {
+      "id": "20",
+      "name": "导出Markdown-非法ID",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}/export",
+            "path_params": {"record_id": "abc"}
+          },
+          "assert": {"status": 422, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 422, "checks": ["$.detail"]}
+    },
+    {
+      "id": "21",
+      "name": "删除记录-存在时删除成功",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_021", "test_types": []}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_021"]},
+          "extract": {"id": "$.id"}
+        },
+        {
+          "name": "step_02_delete",
+          "request": {
+            "method": "DELETE",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_01_post.id"}
+          },
+          "assert": {"status": 200, "checks": ["$.message==删除成功"]}
+        },
+        {
+          "name": "step_03_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_01_post.id"}
+          },
+          "assert": {"status": 404, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 404, "checks": ["$.detail"]}
+    },
+    {
+      "id": "22",
+      "name": "删除记录-不存在",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_delete",
+          "request": {
+            "method": "DELETE",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": 999999999}
+          },
+          "assert": {"status": 404, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 404, "checks": ["$.detail"]}
+    },
+    {
+      "id": "23",
+      "name": "删除记录-非法ID",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_delete",
+          "request": {
+            "method": "DELETE",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "abc"}
+          },
+          "assert": {"status": 422, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 422, "checks": ["$.detail"]}
+    },
+    {
+      "id": "24",
+      "name": "删除记录-重复删除",
+      "enabled": true,
+      "steps": [
+        {
+          "name": "step_01_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {"feature": "llm_testcase_20261118_024", "test_types": []}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_024"]},
+          "extract": {"id": "$.id"}
+        },
+        {
+          "name": "step_02_delete",
+          "request": {
+            "method": "DELETE",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_01_post.id"}
+          },
+          "assert": {"status": 200, "checks": ["$.message==删除成功"]}
+        },
+        {
+          "name": "step_03_delete",
+          "request": {
+            "method": "DELETE",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_01_post.id"}
+          },
+          "assert": {"status": 404, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 404, "checks": ["$.detail"]}
+    },
+    {
+      "id": "25",
+      "name": "生成-查询-导出-删除全链路",
+      "enabled": false,
+      "steps": [
+        {
+          "name": "step_01_get",
+          "request": {"method": "GET", "path": "/"},
+          "assert": {"status": 200, "checks": ["$.status==ok", "$.message==服务运行中"]}
+        },
+        {
+          "name": "step_02_post",
+          "request": {
+            "method": "POST",
+            "path": "/api/v1/generate",
+            "body": {
+              "feature": "llm_testcase_20261118_025",
+              "platform": "Web",
+              "test_types": ["normal", "exception", "boundary", "security"],
+              "case_count": 1
+            }
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_025", "$.platform==Web", "$.case_count==1", "$.cases.normal", "$.cases.exception", "$.cases.boundary", "$.cases.security"]},
+          "extract": {"id": "$.id"}
+        },
+        {
+          "name": "step_03_get",
+          "request": {"method": "GET", "path": "/api/v1/history"},
+          "assert": {"status": 200, "checks": []}
+        },
+        {
+          "name": "step_04_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_02_post.id"}
+          },
+          "assert": {"status": 200, "checks": ["$.id>0", "$.feature==llm_testcase_20261118_025", "$.platform==Web", "$.case_count==1"]}
+        },
+        {
+          "name": "step_05_get_export_json_string",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}/export",
+            "path_params": {"record_id": "STEP:step_02_post.id"}
+          },
+          "assert": {"status": 200, "checks": []}
+        },
+        {
+          "name": "step_06_delete",
+          "request": {
+            "method": "DELETE",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_02_post.id"}
+          },
+          "assert": {"status": 200, "checks": ["$.message==删除成功"]}
+        },
+        {
+          "name": "step_07_get",
+          "request": {
+            "method": "GET",
+            "path": "/api/v1/history/{record_id}",
+            "path_params": {"record_id": "STEP:step_02_post.id"}
+          },
+          "assert": {"status": 404, "checks": ["$.detail"]}
+        }
+      ],
+      "assert": {"status": 404, "checks": ["$.detail"]}
+    }
+  ]
+}

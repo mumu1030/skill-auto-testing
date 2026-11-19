@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# 测试产物
+allure-results/
+allure-report/
+reports/
+
+# Node（Newman / Allure CLI 相关）
+node_modules/
+
+# 密钥与环境配置
+.env
+config/.env
+**/.env
+
+# 编辑器
+.idea/
+.vscode/
+
+# 工作空间
+.workbuddy/
+.codebuddy/
